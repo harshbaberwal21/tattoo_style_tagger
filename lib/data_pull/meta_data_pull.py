@@ -31,10 +31,11 @@ def read_tattoos_meta_data(styles: pd.core.frame.DataFrame) -> pd.core.frame.Dat
 
         print(f"Done reading meta data for style {style_name} ")
 
-    all_styles_meta_data = pd.concat(styles_meta_data)
-    time.sleep(5)
+        time.sleep(5)
 
-    return all_styles_meta_data
+    all_styles_meta_data = pd.concat(styles_meta_data)
+
+    return all_styles_meta_data.reset_index(drop=True)
 
 
 def read_meta_data_for_single_style(style_query, max_pull_count=10000):
@@ -95,7 +96,7 @@ def read_meta_data_from_one_page(response_dict_data: dict):
         record: dict = {}
         record["tattoo_id"] = tattoo_data["id"]
         record["image_url"] = tattoo_data["image"]["url"]
-        record["styles"] = tattoo_data["classification"]["styles"]
+        record["styles"] = str(tattoo_data["classification"]["styles"])
 
         tattoos_records.append(record)
 
