@@ -6,8 +6,8 @@ import pandas as pd
 
 
 def flag_images_with_dims_outliers(tattoo_meta_data_processed, tattoos_dims_df):
-    """Tags tattoo images from processed metadata with outlier size viz.
-    height and width, as not processed by creating a new flag column, 'to_process'.
+    """Tag tattoos from processed metadata with outlier dimensions viz.
+    height and width, as not to process by creating a new flag column, 'to_process'.
 
     Args:
         tattoo_images_meta_data (pd.core.frame.DataFrame): Processed tattoo metadata
@@ -43,8 +43,7 @@ def flag_images_with_dims_outliers(tattoo_meta_data_processed, tattoos_dims_df):
 
 
 def filter_out_less_represented_styles(tattoo_meta_data, tattoo_img_count_thresh=50):
-    """Filter out styles that have not enough images associated with them.
-    The default minimum threshold is 50 images per style.
+    """Filter out styles that do not have enough images associated with them.
 
     Args:
         tattoo_meta_data (pd.core.frame.DataFrame): Processed tattoo metadata.
@@ -71,7 +70,8 @@ def filter_out_less_represented_styles(tattoo_meta_data, tattoo_img_count_thresh
 
 # pylint: disable=bare-except
 def get_dims_for_all_images(tattoo_meta_data, raw_tattoo_images_path):
-    """Read in and fetch the dimensions for all the downloaded images.
+    """Read in and fetch the dimensions for all the downloaded images
+    specified in tattoo metadata.
 
     Args:
         tattoo_meta_data (pd.core.frame.DataFrame): Processed tattoo metadata.
