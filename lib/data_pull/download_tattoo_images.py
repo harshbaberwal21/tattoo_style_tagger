@@ -2,7 +2,6 @@
 import os
 import time
 import requests
-import pandas as pd
 
 def download_tattoo_images(tattoo_meta_data_processed, download_path):
     """Download the tattoo images for tattoos in processed metadata using
@@ -58,7 +57,7 @@ def download_image(image_url, download_path_w_name):
         download_path_w_name (str): Path of the directory to download
         in with filename included, except the extension.
     """
-    img_data = requests.get(image_url).content
+    img_data = requests.get(image_url, timeout=10).content
     with open(f'{download_path_w_name}.jpg', 'wb') as handler:
         handler.write(img_data)
 
