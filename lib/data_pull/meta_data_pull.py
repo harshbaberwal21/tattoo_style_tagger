@@ -18,7 +18,7 @@ def read_tattoos_meta_data(styles: pd.core.frame.DataFrame) -> pd.core.frame.Dat
         and image URL.
     """
 
-    styles_meta_data: list = []
+    meta_data_for_styles: list = []
 
     for style_row in styles[["style", "style_query"]].iterrows():
         style_name: str = style_row[1]["style"]
@@ -26,16 +26,16 @@ def read_tattoos_meta_data(styles: pd.core.frame.DataFrame) -> pd.core.frame.Dat
 
         print(f"Reading style {style_name}")
 
-        style_meta_data = read_meta_data_for_single_style(style_query)
-        styles_meta_data.append(style_meta_data)
+        meta_data_for_style = read_meta_data_for_single_style(style_query)
+        meta_data_for_styles.append(meta_data_for_style)
 
         print(f"Done reading meta data for style {style_name} ")
 
         time.sleep(5)
 
-    all_styles_meta_data = pd.concat(styles_meta_data)
+    meta_data_for_all_styles = pd.concat(meta_data_for_styles)
 
-    return all_styles_meta_data.reset_index(drop=True)
+    return meta_data_for_all_styles.reset_index(drop=True)
 
 
 def read_meta_data_for_single_style(style_query, max_pull_count=10000):
@@ -54,7 +54,7 @@ def read_meta_data_for_single_style(style_query, max_pull_count=10000):
     page_limit: int = 100
     max_pages: int = int(max_pull_count / page_limit)
     base_url: str = "https://backend-api.tattoodo.com/api/v2/search/posts?"
-    tattoo_meta_data_dfs: list = []
+    meta_data_for_style: list = []
 
     for page in range(1, max_pages + 1):
 
@@ -69,20 +69,20 @@ def read_meta_data_for_single_style(style_query, max_pull_count=10000):
         if "error" in response_dict.keys() or not response_dict["data"]:
             break
 
-        tattoos_meta_data_from_page = read_meta_data_from_one_page(
+        meta_data_from_page = read_meta_data_from_page(
             response_dict["data"]
         )
-        tattoo_meta_data_dfs.append(tattoos_meta_data_from_page)
+        meta_data_for_style.append(meta_data_from_page)
 
         time.sleep(3)
 
-    style_tattoo_meta_data: pd.core.frame.DataFrame = pd.concat(tattoo_meta_data_dfs)
-    style_tattoo_meta_data["searched_style_query"] = style_query
+    all_meta_data_for_style = pd.concat(meta_data_for_style)
+    all_meta_data_for_style["searched_style_query"] = style_query
 
-    return style_tattoo_meta_data
+    return all_meta_data_for_style
 
 
-def read_meta_data_from_one_page(response_dict_data: dict):
+def read_meta_data_from_page(response_dict_data: dict):
     """Read tattoo's meta data from a single page.
 
     Args:
@@ -100,8 +100,8 @@ def read_meta_data_from_one_page(response_dict_data: dict):
 
         tattoos_records.append(record)
 
-    tattoo_meta_data = pd.DataFrame(tattoos_records)
-    return tattoo_meta_data
+    meta_data_from_page = pd.DataFrame(tattoos_records)
+    return meta_data_from_page
 
 
 if __name__ == "__main__":
