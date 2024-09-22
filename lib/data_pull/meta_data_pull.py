@@ -60,11 +60,12 @@ def read_meta_data_for_single_style(style_query, max_pull_count=10000):
 
         api_url: str = base_url + f"style={style_query}&page={page}&limit={page_limit}"
         try:
-            response = requests.get(api_url, timeout=5)
+            with requests.get(api_url, timeout=5) as response:
+                response_text = response.text
         except requests.exceptions.Timeout:
             print(f"{page} of {style_query} Timed out. Moving to next page.")
             continue
-        response_dict: dict = json.loads(response.text)
+        response_dict: dict = json.loads(response_text)
 
         if "error" in response_dict.keys() or not response_dict["data"]:
             break

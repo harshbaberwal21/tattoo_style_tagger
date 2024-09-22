@@ -16,13 +16,6 @@ dag = DAG(
 )
 
 
-add_lib_ref_to_python_path = BashOperator(
-    task_id='compress_and_backup_images',
-    bash_command='PATH=/Users/harshbaberwal/Desktop/Projects/git_repos/tattoo_style_tagger:$PYTHONPATH && export PYTHONPATH',
-    cwd='/tmp',
-    dag=dag,
-)
-
 read_tattoos_meta_data_task = PythonOperator(
     task_id='read_tattoos_meta_data',
     python_callable=read_tattoos_meta_data_driver,
@@ -67,8 +60,7 @@ augment_tattoos_images_data_task = PythonOperator(
 
 
 (
-    add_lib_ref_to_python_path
-    >> read_tattoos_meta_data_task
+    read_tattoos_meta_data_task
     >> process_tattoos_meta_data_task
     >> download_tattoos_images_task
     >> compress_and_backup_images_task

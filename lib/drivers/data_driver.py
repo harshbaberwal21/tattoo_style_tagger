@@ -1,7 +1,7 @@
 """Driver module containing functions for python callables in DAG"""
 
 import os
-import pandas as pd
+# import pandas as pd
 
 from ..data_pull.meta_data_pull import read_tattoos_meta_data
 from ..data_pull.meta_data_processing import (
@@ -24,11 +24,13 @@ TATTOO_DATA_PATH,
 TATTOO_META_DATA_PATH,
 TATTOO_IMAGES_PATH,
 )
+from ..utils import read_csv_data
+
 
 def read_tattoos_meta_data_driver():
     """Driver function for reading tattoo meta data.
     """
-    style_querying_info = pd.read_csv(f"{TATTOO_DATA_PATH}/style_queries_w_description.csv")
+    style_querying_info = read_csv_data(f"{TATTOO_DATA_PATH}/style_queries_w_description.csv")
 
     tattoos_meta_data = read_tattoos_meta_data(style_querying_info)
 
@@ -38,7 +40,7 @@ def read_tattoos_meta_data_driver():
 def process_tattoos_meta_data_driver():
     """Driver function for processing tattoo meta data.
     """
-    tattoos_meta_data = pd.read_csv(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv')
+    tattoos_meta_data = read_csv_data(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv')
 
     tattoos_meta_data_long = process_tattoo_meta_data_to_long_form(tattoos_meta_data)
     tattoos_meta_data_long_filtered = filter_out_tattoos(tattoos_meta_data_long)
@@ -53,7 +55,7 @@ def process_tattoos_meta_data_driver():
 def download_tattoos_images_driver():
     """Driver function for downloading images.
     """
-    tattoos_meta_data_processed = pd.read_csv(
+    tattoos_meta_data_processed = read_csv_data(
         f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed.csv'
         )
 
@@ -64,7 +66,7 @@ def pre_process_tattoos_images_driver():
     """Driver function for pre-processing tattoo iimages and
     update meta data accordingly.
     """
-    tattoos_meta_data_processed = pd.read_csv(
+    tattoos_meta_data_processed = read_csv_data(
         f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed.csv'
         )
 
@@ -87,7 +89,7 @@ def pre_process_tattoos_images_driver():
 def augment_tattoos_images_data_driver():
     """Driver function for augmenting the images.
     """
-    tattoos_meta_data_processed_final = pd.read_csv(
+    tattoos_meta_data_processed_final = read_csv_data(
         f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed_final.csv'
         )
 
