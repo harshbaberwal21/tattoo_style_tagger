@@ -1,5 +1,7 @@
-import pandas as pd
+"""Driver module containing functions for python callables in DAG"""
+
 import os
+import pandas as pd
 
 from ..data_pull.meta_data_pull import read_tattoos_meta_data
 from ..data_pull.meta_data_processing import (
@@ -17,62 +19,87 @@ from ..data_preprocessing.data_augmentation import (
     prep_metadata_w_flipped_image_ids,
     flip_images_to_augment_data,
 )
-DATA_PATH = ""
+from ..temp_constants import(
+TATTOO_DATA_PATH,
+TATTOO_META_DATA_PATH,
+TATTOO_IMAGES_PATH,
+)
 
-def tattoos_meta_data_reading_driver(**args):
-    
-    style_querying_info = pd.read_csv(f"{DATA_PATH}/style_queries_w_description.csv")
-    
+def tattoos_meta_data_reading_driver():
+    """Driver function for reading tattoo meta data.
+    """
+    style_querying_info = pd.read_csv(f"{TATTOO_DATA_PATH}/style_queries_w_description.csv")
+
     tattoos_meta_data = read_tattoos_meta_data(style_querying_info)
 
-    tattoos_meta_data.to_csv(f'{DATA_PATH}/tattoos_meta_data.csv', index=False)
+    tattoos_meta_data.to_csv(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv', index=False)
 
 
-def tattoos_meta_data_processing_driver(**args):
-
-    tattoos_meta_data = pd.read_csv(f'{DATA_PATH}/tattoos_meta_data.csv')
+def tattoos_meta_data_processing_driver():
+    """Driver function for processing tattoo meta data.
+    """
+    tattoos_meta_data = pd.read_csv(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv')
 
     tattoos_meta_data_long = process_tattoo_meta_data_to_long_form(tattoos_meta_data)
     tattoos_meta_data_long_filtered = filter_out_tattoos(tattoos_meta_data_long)
     tattoos_meta_data_processed = handle_duplicates(tattoos_meta_data_long_filtered)
 
-    tattoos_meta_data_processed.to_csv(f'{DATA_PATH}/tattoos_meta_data_processed.csv', index=False)
+    tattoos_meta_data_processed.to_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed.csv',
+        index=False
+        )
 
 
-def tattoos_image_downloading_driver(**args):
+def tattoos_image_downloading_driver():
+    """Driver function for downloading images.
+    """
+    tattoos_meta_data_processed = pd.read_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed.csv'
+        )
 
-    tattoos_meta_data_processed = pd.read_csv(f'{DATA_PATH}/tattoos_meta_data_processed.csv')
-
-    download_tattoo_images(tattoos_meta_data_processed, DATA_PATH)
+    download_tattoo_images(tattoos_meta_data_processed, TATTOO_IMAGES_PATH)
 
 
-def tattoos_image_pre_processing_driver(**args):
+def tattoos_image_pre_processing_driver():
+    """Driver function for pre-processing tattoo iimages and
+    update meta data accordingly.
+    """
+    tattoos_meta_data_processed = pd.read_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed.csv'
+        )
 
-    tattoos_meta_data_processed = pd.read_csv(f'{DATA_PATH}/tattoos_meta_data_processed.csv')
-    
-    tattoo_images_path = os.path.join(DATA_PATH, "raw_tattoo_images")
+    tattoo_images_path = os.path.join(TATTOO_IMAGES_PATH, "raw_tattoo_images")
     tattoos_dims_df, _ = get_dims_for_all_images(tattoos_meta_data_processed, tattoo_images_path)
-    
-    tattoo_meta_data_processed_w_filter = flag_images_with_dims_outliers(
+
+    tattoos_meta_data_processed_w_filter = flag_images_with_dims_outliers(
         tattoos_meta_data_processed,
         tattoos_dims_df
         )
-    tattoo_meta_data_processed_final = filter_out_less_represented_styles(
-        tattoo_meta_data_processed_w_filter
+    tattoos_meta_data_processed_final = filter_out_less_represented_styles(
+        tattoos_meta_data_processed_w_filter
         )
-    tattoo_meta_data_processed_final.to_csv(f'{DATA_PATH}/tattoo_meta_data_processed_final.csv', index=False)
+    tattoos_meta_data_processed_final.to_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed_final.csv',
+        index=False
+        )
 
 
-def tattoos_image_augmenting_driver(**args):
-    tattoo_meta_data_processed_final = pd.read_csv(f'{DATA_PATH}/tattoo_meta_data_processed_final.csv')
+def tattoos_image_augmenting_driver():
+    """Driver function for augmenting the images.
+    """
+    tattoos_meta_data_processed_final = pd.read_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed_final.csv'
+        )
 
-    tattoo_meta_data_processed_final_augmented = prep_metadata_w_flipped_image_ids(tattoo_meta_data_processed_final)
+    tattoos_meta_data_processed_final_augmented = prep_metadata_w_flipped_image_ids(
+        tattoos_meta_data_processed_final
+        )
 
-    tattoo_images_path = os.path.join(DATA_PATH, "raw_tattoo_images")
+    tattoo_images_path = os.path.join(TATTOO_IMAGES_PATH, "raw_tattoo_images")
 
-    flip_images_to_augment_data(tattoo_meta_data_processed_final_augmented, tattoo_images_path)
+    flip_images_to_augment_data(tattoos_meta_data_processed_final_augmented, tattoo_images_path)
 
-    tattoo_meta_data_processed_final_augmented.to_csv(
-        f'{DATA_PATH}/tattoo_meta_data_processed_final_augmented.csv',
+    tattoos_meta_data_processed_final_augmented.to_csv(
+        f'{TATTOO_META_DATA_PATH}/tattoos_meta_data_processed_final_augmented.csv',
         index=False
         )
