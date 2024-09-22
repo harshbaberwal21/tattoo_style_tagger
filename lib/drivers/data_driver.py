@@ -25,7 +25,7 @@ TATTOO_META_DATA_PATH,
 TATTOO_IMAGES_PATH,
 )
 
-def tattoos_meta_data_reading_driver():
+def read_tattoos_meta_data_driver():
     """Driver function for reading tattoo meta data.
     """
     style_querying_info = pd.read_csv(f"{TATTOO_DATA_PATH}/style_queries_w_description.csv")
@@ -35,7 +35,7 @@ def tattoos_meta_data_reading_driver():
     tattoos_meta_data.to_csv(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv', index=False)
 
 
-def tattoos_meta_data_processing_driver():
+def process_tattoos_meta_data_driver():
     """Driver function for processing tattoo meta data.
     """
     tattoos_meta_data = pd.read_csv(f'{TATTOO_META_DATA_PATH}/tattoos_meta_data.csv')
@@ -50,7 +50,7 @@ def tattoos_meta_data_processing_driver():
         )
 
 
-def tattoos_image_downloading_driver():
+def download_tattoos_images_driver():
     """Driver function for downloading images.
     """
     tattoos_meta_data_processed = pd.read_csv(
@@ -60,7 +60,7 @@ def tattoos_image_downloading_driver():
     download_tattoo_images(tattoos_meta_data_processed, TATTOO_IMAGES_PATH)
 
 
-def tattoos_image_pre_processing_driver():
+def pre_process_tattoos_images_driver():
     """Driver function for pre-processing tattoo iimages and
     update meta data accordingly.
     """
@@ -84,7 +84,7 @@ def tattoos_image_pre_processing_driver():
         )
 
 
-def tattoos_image_augmenting_driver():
+def augment_tattoos_images_data_driver():
     """Driver function for augmenting the images.
     """
     tattoos_meta_data_processed_final = pd.read_csv(
