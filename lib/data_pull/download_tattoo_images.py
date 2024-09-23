@@ -64,7 +64,7 @@ def download_image(image_url, download_path_w_name):
         download_path_w_name (str): Path of the directory to download
         in with filename included, except the extension.
     """
-    img_data = requests.get(image_url, timeout=10).content
+    img_data = requests.get(image_url, timeout=60).content
     with open(f"{download_path_w_name}.jpg", "wb") as handler:
         handler.write(img_data)
 

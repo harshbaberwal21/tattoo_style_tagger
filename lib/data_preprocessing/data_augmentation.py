@@ -1,6 +1,5 @@
 """Module with functions to augment the data."""
-from time import time
-
+import time
 import numpy as np
 import pandas as pd
 from PIL import Image
@@ -19,15 +18,15 @@ def prep_metadata_w_flipped_image_ids(tattoo_meta_data_processed):
     """
     tattoo_meta_data_processed_to_augment = tattoo_meta_data_processed[
         tattoo_meta_data_processed['to_process']
-        ]
+        ].copy()
 
     tattoo_meta_data_processed_to_augment['tattoo_id_flipped'] = \
         -1 * tattoo_meta_data_processed_to_augment['tattoo_id']
 
     tattoo_meta_data_processed_augmented = pd.concat([
-        tattoo_meta_data_processed_to_augment[['tattoo_id', 'styles']],
+        tattoo_meta_data_processed_to_augment[['tattoo_id', 'styles', 'image_url', 'to_process']],
         tattoo_meta_data_processed_to_augment[
-            ['tattoo_id_flipped', 'styles']
+            ['tattoo_id_flipped', 'styles', 'image_url', 'to_process']
             ].rename(columns = {'tattoo_id_flipped':'tattoo_id'})
             ])
     return tattoo_meta_data_processed_augmented
