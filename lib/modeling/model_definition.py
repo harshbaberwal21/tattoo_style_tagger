@@ -7,19 +7,27 @@ import torchvision
 
 
 class ResnetTattooStyleTaggerNN(nn.Module):
+    """Tattoo style tagger model inheriting from nn.module class"""
+
     def __init__(self, resnet, out_labels_count):
         super().__init__()
         self.frozen = nn.Sequential(
-            OrderedDict([
-                (name,layer) for name,layer in resnet.named_children() if name != 'fc'
-                ])
-                )
+            OrderedDict(
+                [
+                    (name, layer)
+                    for name, layer in resnet.named_children()
+                    if name != "fc"
+                ]
+            )
+        )
         self.unfrozen = nn.Sequential(
-            OrderedDict([
-                ('fc_resnet', resnet.fc),
-                ('fc_resnet_relu', nn.ReLU()),
-                ('fc_output', nn.Linear(resnet.fc.out_features, out_labels_count))
-                 ])
+            OrderedDict(
+                [
+                    ("fc_resnet", resnet.fc),
+                    ("fc_resnet_relu", nn.ReLU()),
+                    ("fc_output", nn.Linear(resnet.fc.out_features, out_labels_count)),
+                ]
+            )
         )
 
     def forward(self, x):
@@ -44,7 +52,9 @@ def get_model(out_labels_count):
     Returns:
         nn.Module: Instance of the tatto style tagger model.
     """
-    resnet_nn = torchvision.models.resnet18(weights=torchvision.models.ResNet18_Weights.DEFAULT)
+    resnet_nn = torchvision.models.resnet18(
+        weights=torchvision.models.ResNet18_Weights.DEFAULT
+    )
     model = ResnetTattooStyleTaggerNN(resnet_nn, out_labels_count)
 
     for child_layer in model.frozen.children():
