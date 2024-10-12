@@ -50,7 +50,12 @@ def model_data_splitting(tattoos_meta_data_processed_augmented, val_perc=0.1, te
         (~tattoo_ids_for_style['tattoo_id'].isin(test_set_ids))
         ].copy()
         
+        if test_set_size_left < 0:
+            test_set_size_left = 0 
         if dev:
+            if val_set_size_left < 0:
+                val_set_size_left = 0
+                
             style_val_ids = np_repr.choice(tattoo_ids_for_style_left['tattoo_id'].values, size = val_set_size_left, replace=False)
             tattoo_ids_for_style_left_after_val = tattoo_ids_for_style_left[~tattoo_ids_for_style_left['tattoo_id'].isin(style_val_ids)]
             style_test_ids = np_repr.choice(tattoo_ids_for_style_left_after_val['tattoo_id'].values, size = test_set_size_left, replace=False)

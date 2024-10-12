@@ -46,9 +46,10 @@ class TattooDataset(Dataset):
         
         if self.transform:
             transformed_image_tansor = self.transform(image)
+            return transformed_image_tansor, labels
 
-        return transformed_image_tansor, labels
-    
+        return image, labels
+
 
 def pad_to_square_transform(image_tensor):
     """Pad an image to make it a square image. This is done to avoid
