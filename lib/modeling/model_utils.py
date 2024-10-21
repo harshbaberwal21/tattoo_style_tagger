@@ -5,6 +5,13 @@ from torch import nn
 from .model_definition import get_model
 
 
+DATA_DIR = "/Users/harshbaberwal/Desktop/Projects/git_repos/tattoo_style_tagger/data/"
+
+IMAGE_DIR = DATA_DIR + "tattoo_images/raw_tattoo_images/"
+
+MODEL_DIR = DATA_DIR + "model_artifacts/"
+
+
 def get_label_index_map(tattoos_meta_data):
     """Get the label string to index mapping for model training.
 
@@ -45,7 +52,7 @@ def get_tattoo_ids(tattoos_meta_data, example_type):
     return tattoo_ids
 
 
-def get_labels(tattoos_meta_data, example_type):
+def get_tattoo_labels(tattoos_meta_data, example_type):
     """Get the labels by tattoo_id in long format.
 
     Args:
@@ -63,15 +70,6 @@ def get_labels(tattoos_meta_data, example_type):
         .reset_index(drop=True)
     )
     return labels_df
-
-
-DATA_DIR = "/Users/harshbaberwal/Desktop/Projects/git_repos/tattoo_style_tagger/data"
-
-
-IMAGE_DIR = DATA_DIR + "/tattoo_images/raw_tattoo_images"
-
-
-MODEL_DIR = DATA_DIR + "model_artifacts"
 
 
 def get_predicted_labels(predicted_logits, threshold=0.5):

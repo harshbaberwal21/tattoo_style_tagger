@@ -45,17 +45,21 @@ class ResnetTattooStyleTaggerNN(nn.Module):
         return logits
 
 
-def get_model(out_labels_count):
+def get_model(out_labels_count, pretrained_model_path: str = None):
     """Instantiates ResnetTattooStyleTaggerNN model and freezes all layers
     of the resnet part of the model except the last fully connected layer.
 
     Returns:
         nn.Module: Instance of the tatto style tagger model.
     """
-    resnet_nn = torchvision.models.resnet18(
-        weights=torchvision.models.ResNet18_Weights.DEFAULT
-    )
-    model = ResnetTattooStyleTaggerNN(resnet_nn, out_labels_count)
+
+    if pretrained_model_path:
+        model = load_pretrained_model(out_labels_count, pretrained_model_path)
+    else:
+        resnet_nn = torchvision.models.resnet18(
+            weights=torchvision.models.ResNet18_Weights.DEFAULT
+        )
+        model = ResnetTattooStyleTaggerNN(resnet_nn, out_labels_count)
 
     for child_layer in model.frozen.children():
         for param in child_layer.parameters():
@@ -65,4 +69,12 @@ def get_model(out_labels_count):
         for param in child_layer.parameters():
             param.requires_grad = True
 
+    return model
+
+
+def load_pretrained_model(out_labels_count, pretrained_model_path):
+    """Load the pretrained model."""
+    resnet_nn = torchvision.models.resnet18(pretrained=False)
+    model = ResnetTattooStyleTaggerNN(resnet_nn, out_labels_count)
+    model.load_state_dict(torch.load(pretrained_model_path))
     return model
