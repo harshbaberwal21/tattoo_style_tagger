@@ -30,7 +30,8 @@ class ResnetTattooStyleTaggerNN(nn.Module):
             )
         )
 
-        nn.init.xavier_normal_(model.unfrozen.fc_output.weight)
+        nn.init.xavier_normal_(self.unfrozen.fc_resnet.weight)
+        nn.init.xavier_normal_(self.unfrozen.fc_output.weight)
 
     def forward(self, x):
         """Pass forward the data through the layers.
