@@ -128,6 +128,8 @@ def train_model(tattoos_meta_data, num_epochs = 10, batch_size = 64, pretrained_
             "val_hamming_accuracy": val_hamming_accuracy,
         }
 
+        print(eval_metrics.tail(1))
+
         learning_rate_scheduler.step(avg_val_loss)
 
     avg_testing_loss, testing_exact_match_accuracy, testing_hamming_accuracy = (
