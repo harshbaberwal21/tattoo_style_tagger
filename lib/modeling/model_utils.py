@@ -2,7 +2,6 @@
 
 import torch
 from torch import nn
-from .model_definition import get_model
 
 
 DATA_DIR = "/Users/harshbaberwal/Desktop/Projects/git_repos/tattoo_style_tagger/data/"
@@ -10,6 +9,15 @@ DATA_DIR = "/Users/harshbaberwal/Desktop/Projects/git_repos/tattoo_style_tagger/
 IMAGE_DIR = DATA_DIR + "tattoo_images/raw_tattoo_images/"
 
 MODEL_DIR = DATA_DIR + "model_artifacts/"
+
+
+def get_device():
+    if torch.cuda.is_available():
+        return "cuda"
+    elif torch.backends.mps.is_available():
+        return "mps"
+    else:
+        return "cpu"
 
 
 def get_label_index_map(tattoos_meta_data):
@@ -96,15 +104,3 @@ def save_model(model, filepath):
         filepath (str): the file path and name to save it with. Should have the extension .pt.
     """
     torch.save(model.state_dict(), f=filepath)
-
-
-def load_model(out_labels_count, filepath):
-    """Load a saved model.
-
-    Args:
-        out_labels_count (int): the output labels count used to instantiate the model object
-        filepath (str): file path of the saved object to load the model parameters from.
-    """
-    model = get_model(out_labels_count)
-    model.load_state_dict(torch.load(f=filepath, weights_only=True))
-    model.eval()

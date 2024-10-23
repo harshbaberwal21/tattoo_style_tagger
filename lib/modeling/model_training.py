@@ -8,7 +8,7 @@ import torch
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torcheval.metrics import MultilabelAccuracy
 from .dataset_loader import get_precomputed_data_loader
-from ..utils import get_device
+from .model_utils import get_device
 from .model_definition import get_model
 
 
