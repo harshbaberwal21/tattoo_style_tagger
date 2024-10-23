@@ -77,7 +77,7 @@ def get_model(out_labels_count, pretrained_model_path: str = None):
 
 def load_pretrained_model(out_labels_count, pretrained_model_path):
     """Load the pretrained model."""
-    resnet_nn = torchvision.models.resnet18(pretrained=False)
+    resnet_nn = torchvision.models.resnet18()
     model = ResnetTattooStyleTaggerNN(resnet_nn, out_labels_count)
-    model.load_state_dict(torch.load(pretrained_model_path))
+    model.load_state_dict(torch.load(pretrained_model_path, weights_only=True))
     return model

@@ -5,6 +5,7 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 import torch
+from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torcheval.metrics import MultilabelAccuracy
 from .dataset_loader import get_precomputed_data_loader
 from ..utils import get_device
@@ -19,19 +20,15 @@ from .model_utils import (
 )
 
 
-def train_model(tattoos_meta_data, pretrained_model_path: str = None):
+def train_model(tattoos_meta_data, num_epochs = 10, batch_size = 64, pretrained_model_path: str = None):
     """Train the model.
 
     Args:
         tattoos_meta_data (_type_): Tattoos metadata, processed, augmented
         and with example_type indicator
     """
-    # Update to pick from config
-    batch_size = 64
-    learning_rate = 0.03
-    num_epochs = 2
-    device = get_device()
 
+    device = get_device()
     label_index_map = get_label_index_map(tattoos_meta_data)
     out_labels_count = len(label_index_map)
 
@@ -39,7 +36,13 @@ def train_model(tattoos_meta_data, pretrained_model_path: str = None):
     model = get_model(out_labels_count, pretrained_model_path).to(device)
 
     loss_function = torch.nn.BCEWithLogitsLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.1)
+    learning_rate_scheduler = ReduceLROnPlateau(
+        optimizer = optimizer,
+        mode = 'min',
+        factor = 1/3,
+        min_lr = 0.003
+        )
 
     # Define precomputed data loaders
     train_precomputed_tattoo_data_loader = get_precomputed_data_loader(
@@ -124,7 +127,8 @@ def train_model(tattoos_meta_data, pretrained_model_path: str = None):
             "val_exact_match_accuracy": val_exact_match_accuracy,
             "val_hamming_accuracy": val_hamming_accuracy,
         }
-        print(eval_metrics.tail(5))
+
+        learning_rate_scheduler.step(avg_val_loss)
 
     avg_testing_loss, testing_exact_match_accuracy, testing_hamming_accuracy = (
         get_evalulation_metrics(
